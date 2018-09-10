@@ -69,12 +69,22 @@ function is_valid_id(id) {
     /* Returns whether the given id is a valid index for the database */
 
     // TODO: Also check if id is out of bounds for the database, if required
-    return (Number.isSafeInteger(Number(id)) && id >= 0);
+    return (Number.isSafeInteger(Number(id))
+            && id >= 0
+            && id_exists_in_database(id));
     // Number(id) returns a number if string can be converted to id, otherwise NaN
     // id is always going to be passed as string, so this had to be used
 }
 
+function id_exists_in_database(id) {
+    /* Returns whether the id exists in database */
+    return true;
+}
+
 function is_valid_applicant_data(applicant) {
+    /* Returns whether the data provided is valid,
+     * and fit to insert into the database
+     */
     var len = Object.keys(applicant).length;
     if (len <= 0) { // change this to the minimum data fields required
         return false;
