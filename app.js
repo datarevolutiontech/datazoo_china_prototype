@@ -13,11 +13,11 @@ app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json({}));
 
-let mongo_url = 'mongodb://'
+let mongo_url = 'mongodb+srv://'
             + process.env.username + ':'
             + process.env.password
-            + '@cluster0-shard-00-00-xybdm.mongodb.net:27017,cluster0-shard-00-01-xybdm.mongodb.net:27017,cluster0-shard-00-02-xybdm.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true';
-mongoose.connect(mongo_url, { useMongoClient: true });
+            + '@cluster0-xybdm.mongodb.net/test?retryWrites=true';
+mongoose.connect(mongo_url, { useMongoClient: true, useNewUrlParser: true });
 mongoose.Promise = global.Promise;
 
 // CORS headers TODO: Is this needed?
@@ -58,4 +58,4 @@ app.use((err, req, res, next) => {
     })
 });
 
-module.exports = app;
+module.exports = { app, mongoose };
