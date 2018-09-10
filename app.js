@@ -10,11 +10,11 @@ let   app        = express();
 const applicantRoutes = require('./api/routes/applicants');
 
 app.use(morgan('dev'));
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json({}));
 
 let mongo_url = 'mongodb://'
-            + process.env.username + ':' 
+            + process.env.username + ':'
             + process.env.password
             + '@cluster0-shard-00-00-xybdm.mongodb.net:27017,cluster0-shard-00-01-xybdm.mongodb.net:27017,cluster0-shard-00-02-xybdm.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true';
 mongoose.connect(mongo_url, { useMongoClient: true });
