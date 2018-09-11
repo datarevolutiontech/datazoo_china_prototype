@@ -57,7 +57,7 @@ router.post('/', (req, res, next) => {
                 send_error(err);
             });
     } else {
-        error_message("")
+        error_message("");
     }
 
     function send_error(error_message) {

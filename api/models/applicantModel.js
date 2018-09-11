@@ -3,9 +3,11 @@ const mongoose = require('mongoose');
 
 const applicantSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
+
     // ------
-    // Page 1
+    // Page 1 (Personal Info)
     // ------
+
     fullName             : { type: String , required: true  },
     dateOfBirth          : { type: Date   , required: true  },
     gender               : { type: String , required: true  },
@@ -20,7 +22,7 @@ const applicantSchema = mongoose.Schema({
     dateOfExpiry         : { type: Date   , required: true  },
 
     // ------
-    // Page 2
+    // Page 2 (Residential and Contact Info)
     // ------
 
     flatNo     : { type: Number, required: false },
@@ -36,24 +38,72 @@ const applicantSchema = mongoose.Schema({
     email      : { type: String, required: true  },
 
     // ------
-    // Page 3
+    // Page 3 (Work and Education)
     // ------
 
-    // ------
-    // Page 4
-    // ------
+    occupation          : { type: , required: },
+    companyName         : { type: , required: },
+    companyBuildingName : { type: , required: },
+    companyStreetNo     : { type: , required: },
+    companyStreetName   : { type: , required: },
+    companyDistrict     : { type: , required: },
+    companyProvince     : { type: , required: },
+    companyProvince     : { type: , required: },
+    companyTelephone    : { type: , required: },
+    companyEmail        : { type: , required: },
+    institutionName     : { type: , required: },
+    studyProgramme      : { type: , required: },
+    attendanceDateStart : { type: , required: },
+    attendanceDateEnd   : { type: , required: },
 
     // ------
-    // Page 5
+    // Page 4 (Military)
     // ------
 
-    // ------
-    // Page 6
-    // ------
+    militaryRank     : { type: , required: },
+    militaryUnit     : { type: , required: },
+    militaryService  : { type: , required: },
+    militaryDateStart: { type: , required: },
+    militaryDateEnd  : { type: , required: },
 
     // ------
-    // Page 7
+    // Page 5 (Relationships)
     // ------
+
+    familyMemberName        : { type: , required: },
+    familyMemberRelationship: { type: , required: },
+    familyMemberDateOfBirth : { type: , required: },
+
+    // ------
+    // Page 6 (Type of Visa)
+    // ------
+
+    visaType             : { type: , required: },
+    visaOtherInput       : { type: , required: },
+    visaDateStart        : { type: , required: },
+    visaDateEnd          : { type: , required: },
+    visaBusinessName     : { type: , required: },
+    visaBusinessAddress  : { type: , required: },
+    visaBusinessTelephone: { type: , required: },
+    visaBusinessEmail    : { type: , required: },
+    visaWorkName         : { type: , required: },
+    visaWorkAddress      : { type: , required: },
+    visaWorkTelephone    : { type: , required: },
+    visaWorkEmail        : { type: , required: },
+    visaStudyArea        : { type: , required: },
+    visaStudyProgramme   : { type: , required: },
+    visaStudyInstitution : { type: , required: },
+    visaStudyStartDate   : { type: , required: },
+    visaStudyEndDate     : { type: , required: },
+
+    // ------
+    // Page 7 (New Zealand Contacts)
+    // ------
+
+    nzContactName      : { type: , required: },
+    nzContactAddress   : { type: , required: },
+    nzContactTelephone : { type: , required: },
+    nzContactEmail     : { type: , required: }
 });
 
 module.exports = mongoose.model('Applicant', applicantSchema);
