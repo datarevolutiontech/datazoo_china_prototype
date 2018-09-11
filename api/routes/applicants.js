@@ -100,16 +100,34 @@ router.delete('/:applicantId', (req, res, next) => {
     const id = req.params.applicantId;
     // TODO: delete the id's associated entry
     // Does this need authentication?
+    // if (is_valid_id(id)) {
+    //     res.status(200).json({
+    //         message: "Valid id",
+    //         id: id
+    //     });
+    // } else {
+    //
+    // }
     if (is_valid_id(id)) {
-        res.status(200).json({
-            message: "Valid id",
-            id: id
-        });
-    } else {
-        res.status(400).json({
-            message: "Invalid id",
-            id: id
-        });
+        Applicant.findByIdAndRemove(id)
+            .exec()
+            .then(details => {
+                if (details == null) { throw "Applicant with specified ID not found"; }
+                else {
+                    res.status(200).json({
+                        message: "Delete request processed",
+                        id: id,
+                        details: details
+                    });
+                }
+            })
+            .catch(err => {
+                res.status(400).json({
+                    message: "Failed to process delete request",
+                    id: id,
+                    error: err
+                });
+            });
     }
 });
 
