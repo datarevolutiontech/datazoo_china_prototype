@@ -3,6 +3,7 @@ const mongoose  = require('mongoose');
 const Applicant = require('../models/applicantModel');
 
 router = express.Router();
+let example_id = "5b970566d7547c37ebabb044";
 
 router.get('/', (req, res, next) => {
     Applicant.find()
@@ -13,7 +14,7 @@ router.get('/', (req, res, next) => {
                 message: "You can't send a /GET request to /applicants/. An ID must be provided. Here's some data that was found though.",
                 example_query: {
                     type: "GET",
-                    URL: "/applicants/5b970566d7547c37ebabb044"
+                    URL: "/applicants/" + example_id
                 },
                 applicants: applicants
             })
@@ -25,7 +26,7 @@ router.get('/', (req, res, next) => {
                 message: "You can't send a /GET request to /applicants/. An ID must be provided.",
                 example_query: {
                     type: "GET",
-                    URL: "/applicants/5b970566d7547c37ebabb044"
+                    URL: "/applicants/" + example_id
                 }
             })
         });
@@ -33,7 +34,7 @@ router.get('/', (req, res, next) => {
 
 router.post('/', (req, res, next) => {
     if (is_valid_applicant_data(req.body)) { // body does contain (enough) data
-        var parameters = req.body;
+        let parameters = req.body;
         let applicant = new Applicant({});
         parameters['_id'] = new mongoose.Types.ObjectId();
         for (param in parameters) {
@@ -47,19 +48,19 @@ router.post('/', (req, res, next) => {
                 console.log(result);
                 res.status(201).json({
                     message: "Created applicant successfully",
-                    createdApplicant: {
+                    created_applicant: {
                         applicant
                     }
                 });
             })
             .catch(err => {
-                console.log(err);
-                res.status(400).json({
-                    error: err
-                });
+                send_error(err);
             });
-
     } else {
+        error_message("")
+    }
+
+    function send_error(error_message) {
         res.status(400).json({
             message: "You can't send a /POST request to /applicants/ without proper data. Sufficient applicant details must be provided.",
             example_query: {
@@ -69,9 +70,10 @@ router.post('/', (req, res, next) => {
                     data: "Applicant data" // TODO: Insert example of applicant data
                 }
             },
-            your_query: req.body
+            your_query: req.body,
+            error: error_message
         });
-    }
+    };
 });
 
 router.get('/:applicantId', (req, res, next) => {
@@ -128,14 +130,38 @@ router.patch('/:applicantId', (req, res, next) => {
     // TODO: delete the id's associated entry
     // Does this need authentication?
     if (is_valid_id(id)) {
-        res.status(200).json({
-            message: "Valid id",
-            id: id
-        });
+        // TODO: Verify that parameters are all valid changes.
+        // This would include the keys already existing in the applicant,
+        // and the new value conforming to specifications for the entry
+        let parameters = req.body;
+        Applicant.findByIdAndUpdate(
+            id, // id to be updated
+            parameters, // parameters to be updated
+            { new: true }) // return the new version of the applicant
+            .exec()
+            .then(response => {
+                if (response === null) { send_error("Unable to update item."); }
+                res.status(201).json({
+                    message: "Updated applicant successfully",
+                    updated_applicant: response
+                });
+            })
+            .catch(err => {
+                send_error(err);
+            });
     } else {
+        send_error("Is the id correct?")
+    }
+
+    function send_error(error_message) {
         res.status(400).json({
-            message: "Invalid id",
-            id: id
+            message: "You can't send a /PATCH request to /applicants/ without proper data. Sufficient applicant details and the correct id must be provided.",
+            example_query: {
+                type: "PATCH",
+                URL: "/applicants/{id}",
+            },
+            your_query: req.body,
+            error: error_message
         });
     }
 });
@@ -159,7 +185,7 @@ function is_valid_applicant_data(applicant) {
     /* Returns whether the data provided is valid,
      * and fit to insert into the database
      */
-    var len = Object.keys(applicant).length;
+    let len = Object.keys(applicant).length;
     if (len <= 0) { // change this to the minimum data fields required
         return false;
     } else {
