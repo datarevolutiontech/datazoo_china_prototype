@@ -6,15 +6,14 @@ router = express.Router();
 
 router.get('/', (req, res, next) => {
     Applicant.find()
-        .select("firstName")
+        .select('-__v')
         .exec()
         .then(applicants => {
-            console.log(applicants);
             res.status(400).json({
                 message: "You can't send a /GET request to /applicants/. An ID must be provided. Here's some data that was found though.",
                 example_query: {
                     type: "GET",
-                    URL: "/applicants/201"
+                    URL: "/applicants/5b970566d7547c37ebabb044"
                 },
                 applicants: applicants
             })
@@ -26,7 +25,7 @@ router.get('/', (req, res, next) => {
                 message: "You can't send a /GET request to /applicants/. An ID must be provided.",
                 example_query: {
                     type: "GET",
-                    URL: "/applicants/201"
+                    URL: "/applicants/5b970566d7547c37ebabb044"
                 }
             })
         });
@@ -80,39 +79,32 @@ router.get('/:applicantId', (req, res, next) => {
     Applicant.findById(id)
         .exec()
         .then(applicant => {
-                res.status(200).json({
-                    message: "Valid id",
-                    id: id,
-                    person: applicant
-                })
+                if (applicant === null) { throw "Applicant not found"; }
+                else {
+                    res.status(200).json({
+                        message: "Valid id",
+                        id: id,
+                        person: applicant
+                    })
+                }
             }
         )
         .catch(err => {
             res.status(400).json({
                 message: "Invalid id",
-                error: err,
-                id: id
+                id: id,
+                error: err
             })
         });
 });
 
 router.delete('/:applicantId', (req, res, next) => {
     const id = req.params.applicantId;
-    // TODO: delete the id's associated entry
-    // Does this need authentication?
-    // if (is_valid_id(id)) {
-    //     res.status(200).json({
-    //         message: "Valid id",
-    //         id: id
-    //     });
-    // } else {
-    //
-    // }
     if (is_valid_id(id)) {
         Applicant.findByIdAndRemove(id)
             .exec()
             .then(details => {
-                if (details == null) { throw "Applicant with specified ID not found"; }
+                if (details === null) { throw "Applicant with specified ID not found"; }
                 else {
                     res.status(200).json({
                         message: "Delete request processed",
