@@ -1,7 +1,7 @@
 // Applicant Model file
 const mongoose = require('mongoose');
 
-const applicantSchema = new mongoose.Schema({
+const applicantSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     // ------
     // Page 1

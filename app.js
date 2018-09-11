@@ -1,52 +1,47 @@
-const express    = require('express');
-const bodyParser = require('body-parser');
-const morgan     = require('morgan');
-const mongoose   = require('mongoose');
-require('dotenv').config();
+const express = require('express')
+const app = express()
+const morgan = require('morgan')
+const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
 
-let   app        = express();
+const applicantRoutes = require('./api/routes/applicants')
 
-// Route imports
-const applicantRoutes = require('./api/routes/applicants');
+mongoose.connect(
+    'mongodb+srv://dylandrt:' + process.env.MONGO_ATLAS_PW +
+    '@node-rest-shop-qjso9.mongodb.net/test?retryWrites=true',
+    { useNewUrlParser: true }
+)
+mongoose.Promise = global.Promise
 
-app.use(morgan('dev'));
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json({}));
+app.use(morgan('dev'))
+app.use(bodyParser.urlencoded({extended: false}))
+app.use(bodyParser.json())
 
-let mongo_url = 'mongodb+srv://'
-            + process.env.username + ':'
-            + process.env.password
-            + '@cluster0-xybdm.mongodb.net/test?retryWrites=true';
-mongoose.connect(mongo_url, { useMongoClient: true, useNewUrlParser: true });
-mongoose.Promise = global.Promise;
-
-// CORS headers TODO: Is this needed?
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Origin', '*')
     res.header(
         'Access-Control-Allow-Headers',
-        '*');
-
-    // Establish what methods are allowed
+        'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    )
     if (req.method === 'OPTIONS') {
         res.header(
             'Access-Control-Allow-Methods',
-            'PUT', 'POST', 'GET', 'DELETE'
-        );
-        return res.status(200).json({});
+            'PUT, POST, PATCH, DELETE, GET'
+        )
+        return res.status(200).json({})
     }
-    next();
-});
+    next()
+})
 
 // Routes that handle requests
 app.use('/applicants', applicantRoutes);
 
 // Request went past routes
 app.use((req, res, next) => {
-    const error = new Error('Route not found');
-    error.status = 404;
-    next(error);
-});
+    const error = new Error('Not found')
+    error.status = 404
+    next(error)
+})
 
 // Error thrown, handle it
 app.use((err, req, res, next) => {
@@ -56,6 +51,6 @@ app.use((err, req, res, next) => {
             message: err.message
         }
     })
-});
+})
 
-module.exports = { app, mongoose };
+module.exports = app

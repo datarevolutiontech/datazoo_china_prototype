@@ -1,5 +1,4 @@
 const express   = require('express');
-const app       = require('../../app');
 const mongoose  = require('mongoose');
 const Applicant = require('../models/applicantModel');
 
@@ -17,11 +16,11 @@ router.get('/', (req, res, next) => {
                     type: "GET",
                     URL: "/applicants/201"
                 },
-                applicants: applicant
+                applicants: applicants
             })
         })
         .catch(err => {
-            console.log(err),
+            console.log(err)
 
             res.status(400).json({
                 message: "You can't send a /GET request to /applicants/. An ID must be provided.",
@@ -36,20 +35,30 @@ router.get('/', (req, res, next) => {
 router.post('/', (req, res, next) => {
     if (is_valid_applicant_data(req.body)) { // body does contain (enough) data
         var parameters = req.body;
-        parameters['_id'] = mongoose.Types.ObjectId();
+        let applicant = new Applicant({});
+        parameters['_id'] = new mongoose.Types.ObjectId();
         for (param in parameters) {
-            console.log(param, parameters[param]);
+            applicant[param] = parameters[param];
+            console.log(param, ': ', parameters[param]);
         }
 
-        const applicant = new Applicant({
-            parameters
-        });
-
-        console.log(applicant);
-        res.status(200).json({
-            id: "Your id is: " + parameters['_id'],
-            your_query: req.body
-        });
+        applicant
+            .save()
+            .then(result => {
+                console.log(result);
+                res.status(201).json({
+                    message: "Created applicant successfully",
+                    createdApplicant: {
+                        applicant
+                    }
+                });
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(400).json({
+                    error: err
+                });
+            });
 
     } else {
         res.status(400).json({
@@ -78,12 +87,13 @@ router.get('/:applicantId', (req, res, next) => {
                 })
             }
         )
-        .catch(
+        .catch(err => {
             res.status(400).json({
                 message: "Invalid id",
+                error: err,
                 id: id
             })
-        );
+        });
 });
 
 router.delete('/:applicantId', (req, res, next) => {
