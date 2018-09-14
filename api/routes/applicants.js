@@ -33,38 +33,63 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/', (req, res, next) => {
-    if (is_valid_applicant_data(req.body)) { // body does contain (enough) data
         let parameters = req.body;
-        let applicant = new Applicant({});
-        parameters['_id'] = new mongoose.Types.ObjectId();
-        for (param in parameters) {
-            applicant[param] = parameters[param];
-            console.log(param, ': ', parameters[param]);
+
+        if (parameters.step == null) {
+            send_error("Step number not specified");
+        } else if (parameters.id == null) {
+            send_error("Id number not specified");
+        } else {
+            console.log('\n', parameters.data[0], '\n');
+
+            applicant = Applicant.findById(parameters.id);
+            applicant.relationships = parameters.data;
+
+            applicant
+                .save()
+                .then(result => {
+                    console.log(result);
+                    res.status(200).json({
+                        message: "Added applicant data",
+                        applicant: applicant
+                    });
+                })
+                .catch(err => {
+                    send_error(err);
+                });
         }
 
-        applicant
-            .save()
-            .then(result => {
-                console.log(result);
-                res.status(201).json({
-                    message: "Created applicant successfully",
-                    created_applicant: {
-                        applicant
-                    }
-                });
-            })
-            .catch(err => {
-                send_error(err);
-            });
-    } else {
-        error_message("");
-    }
+    // if (is_valid_applicant_data(req.body)) { // body does contain (enough) data
+    //     let applicant = new Applicant({});
+    //     parameters['_id'] = new mongoose.Types.ObjectId();
+    //     for (param in parameters) {
+    //         applicant[param] = parameters[param];
+    //         console.log(param, ': ', parameters[param]);
+    //     }
+
+    //     applicant
+    //         .save()
+    //         .then(result => {
+    //             console.log(result);
+    //             res.status(201).json({
+    //                 message: "Created applicant successfully",
+    //                 created_applicant: {
+    //                     applicant
+    //                 }
+    //             });
+    //         })
+    //         .catch(err => {
+    //             send_error(err);
+    //         });
+    // } else {
+    //     error_message("");
+    // }
 
     function send_error(error_message) {
         res.status(400).json({
             message: "You can't send a /POST request to /applicants/ without proper data. Sufficient applicant details must be provided.",
             example_query: {
-                type: "GET",
+                type: "POST",
                 URL: "/applicants/",
                 data: {
                     data: "Applicant data" // TODO: Insert example of applicant data
@@ -179,18 +204,6 @@ function is_valid_id(id) {
 function id_exists_in_database(id) {
     /* Returns whether the id exists in database */
     return true;
-}
-
-function is_valid_applicant_data(applicant) {
-    /* Returns whether the data provided is valid,
-     * and fit to insert into the database
-     */
-    let len = Object.keys(applicant).length;
-    if (len <= 0) { // change this to the minimum data fields required
-        return false;
-    } else {
-        return true;
-    }
 }
 
 module.exports = router;
