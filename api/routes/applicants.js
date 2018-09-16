@@ -40,23 +40,29 @@ router.post('/', (req, res, next) => {
         } else if (parameters.id == null) {
             send_error("Id number not specified");
         } else {
-            console.log('\n', parameters.data[0], '\n');
+            let applicant = Applicant.findById(parameters.id);
 
-            applicant = Applicant.findById(parameters.id);
-            applicant.relationships = parameters.data;
+            // Applicant not found, have to create a new one
+            if (applicant == null) {
+                applicant = new Applicant(parameters.id);
+            }
 
-            applicant
-                .save()
-                .then(result => {
-                    console.log(result);
-                    res.status(200).json({
-                        message: "Added applicant data",
-                        applicant: applicant
-                    });
-                })
-                .catch(err => {
-                    send_error(err);
-                });
+            applicant.addData(
+                step=parameters.step,
+                data=parameters.data);
+
+            // applicant
+            //     .save()
+            //     .then(result => {
+            //         console.log(result);
+            //         res.status(200).json({
+            //             message: "Added applicant data",
+            //             applicant: applicant
+            //         });
+            //     })
+            //     .catch(err => {
+            //         send_error(err);
+            //     });
         }
 
     // if (is_valid_applicant_data(req.body)) { // body does contain (enough) data

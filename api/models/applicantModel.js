@@ -23,13 +23,20 @@ const relationshipSchema = mongoose.Schema({
     familyMemberDateOfBirth : {type: Date  , required: true},
 });
 
+const NZContactSchema = mongoose.Schema({
+    nzContactName      : { type: String, required:true },
+    nzContactAddress   : { type: String, required:true },
+    nzContactTelephone : { type: Number, required:true },
+    nzContactEmail     : { type: String, required:true }
+})
+
 const applicantSchema = mongoose.Schema({
     _id: String, // will this be an int instead?
 
     // ------
     // Step 1 (Personal Info)
     // ------
-    // personalInfo: {type: personalInfoSchema, required: true},
+    personalInfo: {type: personalInfoSchema, required: true},
 
 
     // ------
@@ -71,15 +78,12 @@ const applicantSchema = mongoose.Schema({
     // Step 4 (Military)
     // ------
 
-    relationships: [relationshipSchema],
 
     // ------
     // Step 5 (Relationships)
     // ------
 
-    // familyMemberName        : { type: , required: },
-    // familyMemberRelationship: { type: , required: },
-    // familyMemberDateOfBirth : { type: , required: },
+    relationships: {type: [relationshipSchema], required: true},
 
     // ------
     // Step 6 (Type of Visa)
@@ -107,10 +111,58 @@ const applicantSchema = mongoose.Schema({
     // Step 7 (New Zealand Contacts)
     // ------
 
-    // nzContactName      : { type: , required: },
-    // nzContactAddress   : { type: , required: },
-    // nzContactTelephone : { type: , required: },
-    // nzContactEmail     : { type: , required: }
+    // Is this required?
+    nzContacts: {type: [NZContactSchema], required: true}
 });
+
+function addData(step, data) {
+    console.log("step:", step, "\ndata:", data);
+
+    switch(step) {
+        case 1: {
+            initiatePersonalInfo(data);
+            break;
+        }
+        case 2: {
+            initiate(data);
+            break;
+        }
+        case 3: {
+            initiate(data);
+            break;
+        }
+        case 4: {
+            initiate(data);
+            break;
+        }
+        case 5: {
+            initiateRelationships(data);
+            break;
+        }
+        case 6: {
+            initiate(data);
+            break;
+        }
+        case 7: {
+            initiateNZContacts(data);
+            break;
+        }
+    }
+}
+
+function initiatePersonalInfo(data) {
+    // Check data is valid?
+    self.personalInfo = new personalInfoSchema(data);
+}
+
+function initiateRelationships(data) {
+    // Check data is valid?
+    self.relationships = new relationshipSchema(data);
+}
+
+function initiateNZContacts(data) {
+    // Check data is valid?
+    self.NZContacts = new NZContactSchema(data);
+}
 
 module.exports = mongoose.model('Applicant', applicantSchema);
