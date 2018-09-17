@@ -40,28 +40,56 @@ router.post('/', (req, res, next) => {
         } else if (parameters.id == null) {
             send_error("Id number not specified");
         } else {
-            let applicant = Applicant.findById(parameters.id);
+            Applicant
+                .findById(parameters.id)
+                .then(applicant => {
+                    if (applicant == null || parameters.step == 0) {
+                        // Applicant not found, have to create one
+                        applicant = Applicant.create({ _id: mongoose.Types.ObjectId(parameters.id) })
+
+                        res.status(200).json({
+                            message: "Created new entry!",
+                            applicant: applicant
+                        })
+                    } else {
+                        applicant.addData(step = parameters.step, data = parameters.data);
+                        console.log("Added data?");
+                        applicant.update();
+
+                        res.status(200).json({
+                            message: "Added entries:",
+                            applicant: applicant
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                    send_error(err);
+                })
 
             // Applicant not found, have to create a new one
-            if (applicant == null || parameters.step == 0) {
-                applicant = new Applicant({ id: parameters.id });
-            } else {
-                applicant.addData(
-                    step = parameters.step,
-                    data = parameters.data);
-            }
-            // applicant
-            //     .save()
-            //     .then(result => {
-            //         console.log(result);
-            //         res.status(200).json({
-            //             message: "Added applicant data",
-            //             applicant: applicant
-            //         });
-            //     })
-            //     .catch(err => {
-            //         send_error(err);
-            //     });
+            // if (applicant == null || parameters.step == 0) {
+            //     // Have to convert string to ObjectID type in order to use it as an ID
+            //     applicant = new Applicant({ _id: mongoose.Types.ObjectId(parameters.id) });
+
+            //     applicant
+            //         .save()
+            //         .then(result => {
+            //             console.log(result);
+            //             res.status(200).json({
+            //                 message: "Added new applicant",
+            //                 applicant: applicant
+            //             });
+            //         })
+            // } else {
+            //     Applicant.findById(parameters.id)
+            //         .exec(function (err, applicant) {
+            //             applicant.addData(step = parameters.step,
+            //                               data = parameters.data);
+            //         })
+
+
+            // }
         }
 
     // if (is_valid_applicant_data(req.body)) { // body does contain (enough) data

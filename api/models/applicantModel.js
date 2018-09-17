@@ -49,7 +49,11 @@ const workAndEducationSchema = mongoose.Schema({
 });
 
 const militaryServiceSchema = mongoose.Schema({
-
+    militaryRank     : { type: String, required: false },
+    militaryUnit     : { type: String, required: false },
+    militaryService  : { type: String, required: false },
+    militaryDateStart: { type: Date  , required: false },
+    militaryDateEnd  : { type: Date  , required: false }
 });
 
 const relationshipSchema = mongoose.Schema({
@@ -131,74 +135,80 @@ const applicantSchema = mongoose.Schema({
     nzContacts: [NZContactSchema]
 });
 
-function addData(step, data) {
+applicantSchema.methods.addData = function(step, data) {
     console.log("step:", step, "\ndata:", data);
 
     switch(step) {
-        case 1: {
+        case "1": {
             initiatePersonalInfo(data);
             break;
         }
-        case 2: {
+        case "2": {
             initiateResidentialInfo(data);
             break;
         }
-        case 3: {
+        case "3": {
             initiateWorkAndEducation(data);
             break;
         }
-        case 4: {
+        case "4": {
+            console.log(data);
+
             initiateMilitaryService(data);
             break;
         }
-        case 5: {
+        case "5": {
             initiateRelationships(data);
             break;
         }
-        case 6: {
+        case "6": {
             initiateVisaType(data);
             break;
         }
-        case 7: {
+        case "7": {
             initiateNZContacts(data);
             break;
         }
     }
+
+    return;
 }
 
 function initiatePersonalInfo(data) {
     // Check data is valid?
-    self.personalInfo = new personalInfoSchema(data);
+    personalInfo = new personalInfoSchema(data);
 }
 
 function initiateResidentialInfo(data) {
     // Check data is valid?
-    self.residentialInfo = new residentialInfoSchema(data);
+    residentialInfo = new residentialInfoSchema(data);
 }
 
 function initiateWorkAndEducation(data) {
     // Check data is valid?
-    self.workAndEducation = new workAndEducationSchema(data);
+    workAndEducation = new workAndEducationSchema(data);
 }
 
 function initiateMilitaryService(data) {
     // Check data is valid?
-    self.militaryService = new militaryServiceSchema(data);
+    for (var service in data)
+        console.log(service['militaryRank'], service.militaryUnit);
+    militaryService = new militaryServiceSchema(data);
 }
 
 function initiateRelationships(data) {
     // Check data is valid?
-    self.relationships = new relationshipSchema(data);
+    relationships = new relationshipSchema(data);
 }
 
 function initiateVisaType(data) {
     // Check data is valid?
-    self.visaType = new visaTypeSchema(data);
+    visaType = new visaTypeSchema(data);
 }
 
 function initiateNZContacts(data) {
     // Check data is valid?
-    self.NZContacts = new NZContactSchema(data);
+    NZContacts = new NZContactSchema(data);
 }
 
 module.exports = mongoose.model('Applicant', applicantSchema);
