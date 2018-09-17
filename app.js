@@ -7,13 +7,15 @@ require('dotenv').config()
 
 const applicantRoutes = require('./api/routes/applicants')
 
-
 let dbURL = "mongodb+srv://dylandrt:";
 dbURL    += process.env.MONGO_ATLAS_PW;
 dbURL    += "@node-rest-shop-qjso9.mongodb.net/test?retryWrites=true";
 console.log(dbURL);
 mongoose
-    .connect(dbURL, {authMechanism: 'SCRAM-SHA-1'})
+    .connect(dbURL,
+            { authMechanism: 'SCRAM-SHA-1',
+            useNewUrlParser: true }
+    )
     .catch(err => {
         console.log(err);
     });

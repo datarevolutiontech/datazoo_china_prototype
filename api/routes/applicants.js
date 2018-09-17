@@ -43,14 +43,13 @@ router.post('/', (req, res, next) => {
             let applicant = Applicant.findById(parameters.id);
 
             // Applicant not found, have to create a new one
-            if (applicant == null) {
-                applicant = new Applicant(parameters.id);
+            if (applicant == null || parameters.step == 0) {
+                applicant = new Applicant({ id: parameters.id });
+            } else {
+                applicant.addData(
+                    step = parameters.step,
+                    data = parameters.data);
             }
-
-            applicant.addData(
-                step=parameters.step,
-                data=parameters.data);
-
             // applicant
             //     .save()
             //     .then(result => {

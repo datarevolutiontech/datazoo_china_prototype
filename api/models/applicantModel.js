@@ -10,109 +10,125 @@ const personalInfoSchema = mongoose.Schema({
     placeOfBirth         : { type: String , required: true  },
     countryOfBirth       : { type: String , required: true  },
     chineseCommercialCode: { type: String , required: false },
-    chineseCardNumber    : { type: String , required: false },
+    chineseCardNumber    : { type: String , required: true  },
     chineseNationalId    : { type: String , required: true  },
     passportNo           : { type: String , required: true  },
     dateOfIssue          : { type: Date   , required: true  },
-    dateOfExpiry         : { type: Date   , required: true  },
+    dateOfExpiry         : { type: Date   , required: true  }
+});
+
+const residentialInfoSchema = mongoose.Schema({
+    flatNo     : { type: Number, required: false },
+    entranceNo : { type: Number, required: false },
+    buildingNo : { type: Number, required: false },
+    streetNo   : { type: Number, required: true  },
+    streetName : { type: String, required: true  },
+    complexName: { type: String, required: false },
+    district   : { type: String, required: true  },
+    city       : { type: String, required: true  },
+    province   : { type: String, required: true  },
+    telephone  : { type: Number, required: true  },
+    email      : { type: String, required: true  }
+});
+
+const workAndEducationSchema = mongoose.Schema({
+    occupation          : { type: String, required: false },
+    companyName         : { type: String, required: false },
+    companyBuildingName : { type: String, required: false },
+    companyStreetNo     : { type: Number, required: false },
+    companyStreetName   : { type: String, required: false },
+    companyDistrict     : { type: String, required: false },
+    companyProvince     : { type: String, required: false },
+    companyProvince     : { type: String, required: false },
+    companyTelephone    : { type: Number, required: false },
+    companyEmail        : { type: String, required: false },
+    institutionName     : { type: String, required: false },
+    studyProgramme      : { type: String, required: false },
+    attendanceDateStart : { type: Date,   required: false },
+    attendanceDateEnd   : { type: Date,   required: false },
+});
+
+const militaryServiceSchema = mongoose.Schema({
+
 });
 
 const relationshipSchema = mongoose.Schema({
-    familyMemberName        : {type: String, required: true},
-    familyMemberRelationship: {type: String, required: true},
-    familyMemberDateOfBirth : {type: Date  , required: true},
+    familyMemberName        : { type: String, required: true },
+    familyMemberRelationship: { type: String, required: true },
+    familyMemberDateOfBirth : { type: Date  , required: true }
+});
+
+const visaTypeSchema = mongoose.Schema({
+    visaType             : { type: String, required: false },
+    visaOtherInput       : { type: String, required: false },
+    visaDateStart        : { type: Date,   required: true  },
+    visaDateEnd          : { type: Date,   required: true  },
+    visaBusinessName     : { type: String, required: false },
+    visaBusinessAddress  : { type: String, required: false },
+    visaBusinessTelephone: { type: Number, required: false },
+    visaBusinessEmail    : { type: String, required: false },
+    visaWorkName         : { type: String, required: false },
+    visaWorkAddress      : { type: String, required: false },
+    visaWorkTelephone    : { type: String, required: false },
+    visaWorkEmail        : { type: String, required: false },
+    visaStudyArea        : { type: String, required: false },
+    visaStudyProgramme   : { type: String, required: false },
+    visaStudyInstitution : { type: String, required: false },
+    visaStudyStartDate   : { type: Date,   required: false },
+    visaStudyEndDate     : { type: Date,   required: false },
 });
 
 const NZContactSchema = mongoose.Schema({
-    nzContactName      : { type: String, required:true },
-    nzContactAddress   : { type: String, required:true },
-    nzContactTelephone : { type: Number, required:true },
-    nzContactEmail     : { type: String, required:true }
-})
+    nzContactName      : { type: String, required: true  },
+    nzContactAddress   : { type: String, required: false },
+    nzContactTelephone : { type: Number, required: false },
+    nzContactEmail     : { type: String, required: false }
+});
 
 const applicantSchema = mongoose.Schema({
-    _id: String, // will this be an int instead?
+    _id: { type: mongoose.Schema.ObjectId, required: true }, // will this be an int instead?
 
     // ------
     // Step 1 (Personal Info)
     // ------
-    personalInfo: {type: personalInfoSchema, required: true},
 
+    personalInfo: personalInfoSchema,
 
     // ------
     // Step 2 (Residential and Contact Info)
     // ------
 
-    // flatNo     : { type: Number, required: false },
-    // entranceNo : { type: Number, required: false },
-    // buildingNo : { type: Number, required: false },
-    // streetNo   : { type: Number, required: true  },
-    // streetName : { type: String, required: true  },
-    // complexName: { type: String, required: false },
-    // district   : { type: String, required: true  },
-    // city       : { type: String, required: true  },
-    // province   : { type: String, required: true  },
-    // telephone  : { type: Number, required: true  },
-    // email      : { type: String, required: true  },
+    residentialInfo: residentialInfoSchema,
 
     // ------
     // Step 3 (Work and Education)
     // ------
 
-    // occupation          : { type: , required: },
-    // companyName         : { type: , required: },
-    // companyBuildingName : { type: , required: },
-    // companyStreetNo     : { type: , required: },
-    // companyStreetName   : { type: , required: },
-    // companyDistrict     : { type: , required: },
-    // companyProvince     : { type: , required: },
-    // companyProvince     : { type: , required: },
-    // companyTelephone    : { type: , required: },
-    // companyEmail        : { type: , required: },
-    // institutionName     : { type: , required: },
-    // studyProgramme      : { type: , required: },
-    // attendanceDateStart : { type: , required: },
-    // attendanceDateEnd   : { type: , required: },
+    workAndEducation: workAndEducationSchema,
 
     // ------
     // Step 4 (Military)
     // ------
 
+    militaryService: [militaryServiceSchema],
 
     // ------
     // Step 5 (Relationships)
     // ------
 
-    relationships: {type: [relationshipSchema], required: true},
+    relationships: [relationshipSchema],
 
     // ------
     // Step 6 (Type of Visa)
     // ------
 
-    // visaType             : { type: , required: },
-    // visaOtherInput       : { type: , required: },
-    // visaDateStart        : { type: , required: },
-    // visaDateEnd          : { type: , required: },
-    // visaBusinessName     : { type: , required: },
-    // visaBusinessAddress  : { type: , required: },
-    // visaBusinessTelephone: { type: , required: },
-    // visaBusinessEmail    : { type: , required: },
-    // visaWorkName         : { type: , required: },
-    // visaWorkAddress      : { type: , required: },
-    // visaWorkTelephone    : { type: , required: },
-    // visaWorkEmail        : { type: , required: },
-    // visaStudyArea        : { type: , required: },
-    // visaStudyProgramme   : { type: , required: },
-    // visaStudyInstitution : { type: , required: },
-    // visaStudyStartDate   : { type: , required: },
-    // visaStudyEndDate     : { type: , required: },
+    visaType: visaTypeSchema,
 
     // ------
     // Step 7 (New Zealand Contacts)
     // ------
 
-    // Is this required?
-    nzContacts: {type: [NZContactSchema], required: true}
+    nzContacts: [NZContactSchema]
 });
 
 function addData(step, data) {
@@ -124,15 +140,15 @@ function addData(step, data) {
             break;
         }
         case 2: {
-            initiate(data);
+            initiateResidentialInfo(data);
             break;
         }
         case 3: {
-            initiate(data);
+            initiateWorkAndEducation(data);
             break;
         }
         case 4: {
-            initiate(data);
+            initiateMilitaryService(data);
             break;
         }
         case 5: {
@@ -140,7 +156,7 @@ function addData(step, data) {
             break;
         }
         case 6: {
-            initiate(data);
+            initiateVisaType(data);
             break;
         }
         case 7: {
@@ -155,9 +171,29 @@ function initiatePersonalInfo(data) {
     self.personalInfo = new personalInfoSchema(data);
 }
 
+function initiateResidentialInfo(data) {
+    // Check data is valid?
+    self.residentialInfo = new residentialInfoSchema(data);
+}
+
+function initiateWorkAndEducation(data) {
+    // Check data is valid?
+    self.workAndEducation = new workAndEducationSchema(data);
+}
+
+function initiateMilitaryService(data) {
+    // Check data is valid?
+    self.militaryService = new militaryServiceSchema(data);
+}
+
 function initiateRelationships(data) {
     // Check data is valid?
     self.relationships = new relationshipSchema(data);
+}
+
+function initiateVisaType(data) {
+    // Check data is valid?
+    self.visaType = new visaTypeSchema(data);
 }
 
 function initiateNZContacts(data) {
