@@ -21,7 +21,7 @@ mongoose
 mongoose.Promise = global.Promise
 
 app.use(morgan('dev'))
-app.use(bodyParser.urlencoded({extended: false}))
+app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
 
 app.use((req, res, next) => {
@@ -37,6 +37,16 @@ app.use((req, res, next) => {
         )
         return res.status(200).json({})
     }
+    next()
+})
+
+app.use('/', (req, res, next) => {
+    var data = ''
+    res.on('data', chunk => { data+=chunk })
+    res.on('end', () => {
+      console.log(data)
+    })
+
     next()
 })
 

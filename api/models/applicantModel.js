@@ -135,81 +135,39 @@ const applicantSchema = mongoose.Schema({
     nzContacts: [NZContactSchema]
 });
 
-applicantSchema.methods.addData = function(step, data) {
-    console.log("step:", step, "\ndata:", data);
-
-    switch(step) {
-        case "1": {
-            initiatePersonalInfo(data);
-            break;
-        }
-        case "2": {
-            initiateResidentialInfo(data);
-            break;
-        }
-        case "3": {
-            initiateWorkAndEducation(data);
-            break;
-        }
-        case "4": {
-            console.log(data);
-
-            initiateMilitaryService(data);
-            break;
-        }
-        case "5": {
-            initiateRelationships(data);
-            break;
-        }
-        case "6": {
-            initiateVisaType(data);
-            break;
-        }
-        case "7": {
-            initiateNZContacts(data);
-            break;
-        }
-    }
-
-    return;
+applicantSchema.static.validatePersonalInfo = function(data) {
+    // Check data is valid
+    return true;
 }
 
-function initiatePersonalInfo(data) {
-    // Check data is valid?
-    personalInfo = new personalInfoSchema(data);
+applicantSchema.static.validateResidentialInfo = function(data) {
+    // Check data is valid
+    return true;
 }
 
-function initiateResidentialInfo(data) {
-    // Check data is valid?
-    residentialInfo = new residentialInfoSchema(data);
+applicantSchema.static.validateWorkAndEducation = function(data) {
+    // Check data is valid
+    return true;
 }
 
-function initiateWorkAndEducation(data) {
-    // Check data is valid?
-    workAndEducation = new workAndEducationSchema(data);
+applicantSchema.methods.validateMilitaryService = function(data) {
+    // Check data is valid
+    return true;
 }
 
-function initiateMilitaryService(data) {
-    // Check data is valid?
-    for (let service of data) {
-        console.log(service['militaryRank'], service.militaryUnit);
-    }
-    militaryService = new militaryServiceSchema(data);
+applicantSchema.static.validateRelationships = function(data) {
+    // Check data is valid
+    return true;
 }
 
-function initiateRelationships(data) {
-    // Check data is valid?
-    relationships = new relationshipSchema(data);
+applicantSchema.static.validateVisaType = function(data) {
+    // Check data is valid
+    return true;
 }
 
-function initiateVisaType(data) {
-    // Check data is valid?
-    visaType = new visaTypeSchema(data);
-}
-
-function initiateNZContacts(data) {
-    // Check data is valid?
-    NZContacts = new NZContactSchema(data);
+applicantSchema.static.validateNZContacts = function(data) {
+    // Check data is valid
+    return true;
 }
 
 module.exports = mongoose.model('Applicant', applicantSchema);

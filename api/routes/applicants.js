@@ -33,7 +33,10 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/', (req, res, next) => {
-        let parameters = req.body;
+    let parameters = req.body;
+
+        console.log(parameters);
+
 
         if (parameters.step == null) {
             send_error("Step number not specified");
@@ -52,14 +55,21 @@ router.post('/', (req, res, next) => {
                             applicant: applicant
                         })
                     } else {
-                        applicant.addData(step = parameters.step, data = parameters.data);
-                        console.log("Added data?");
-                        applicant.update();
+                        let military_service = [];
+                        for (let service of parameters.data) {
+                            military_service.push(service);
+                        }
 
-                        res.status(200).json({
-                            message: "Added entries:",
-                            applicant: applicant
-                        });
+                        Applicant
+                            .findByIdAndUpdate(id=parameters.id, { "militaryService": military_service })
+                            .then(result => {
+                                if (result != null) {
+                                    res.status(200).json({
+                                        message: "Added entries:",
+                                        applicant: applicant
+                                    });
+                                }
+                            })
                     }
                 })
                 .catch(err => {
