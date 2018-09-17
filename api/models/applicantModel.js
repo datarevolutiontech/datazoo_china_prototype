@@ -191,8 +191,9 @@ function initiateWorkAndEducation(data) {
 
 function initiateMilitaryService(data) {
     // Check data is valid?
-    for (var service in data)
+    for (let service of data) {
         console.log(service['militaryRank'], service.militaryUnit);
+    }
     militaryService = new militaryServiceSchema(data);
 }
 
