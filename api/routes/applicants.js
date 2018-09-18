@@ -3,7 +3,7 @@ const mongoose  = require('mongoose');
 const Applicant = require('../models/applicantModel');
 
 router = express.Router();
-let example_id = "5b970566d7547c37ebabb044";
+let example_id = "313233313233313233313233";
 
 router.get('/', (req, res, next) => {
     Applicant.find()
@@ -16,6 +16,7 @@ router.get('/', (req, res, next) => {
                     type: "GET",
                     URL: "/applicants/" + example_id
                 },
+                applicant_count: applicants.length,
                 applicants: applicants
             })
         })
@@ -174,8 +175,8 @@ router.post('/retrieveID/', (req, res, next) => {
         error_response("Not all the required information was provided.");
     }
 
-    let applicant = Applicant.
-        findOne({
+    Applicant
+        .findOne({
             "personalInfo.firstName": firstName,
             "personalInfo.familyName": familyName,
             "personalInfo.chineseCardNo": chineseCardNo,
