@@ -190,7 +190,7 @@ router.post('/retrieveID/', (req, res, next) => {
             })
         })
         .catch(error => {
-            error_response("Error while looking for relevant applicant", error);
+            error_response("Error while looking for relevant user", error);
         })
 
     function error_response(message, error) {

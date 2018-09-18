@@ -166,27 +166,6 @@ applicantSchema.pre('findOneAndUpdate', function(next) {
     next();
 });
 
-personalInfoSchema.static.findByInfo = function(firstName, familyName,
-                                                chineseCardNo, chineseNationalId) {
-    personalInfo.findByInfo({
-        firstName: firstName,
-        familyName: familyName,
-        chineseCardNo: chineseCardNo,
-        chineseNationalId: chineseNationalId
-    });
-
-    if (personalInfo != null) {
-        return personalInfo._id;
-    } else {
-        return null;
-    }
-}
-
-applicantSchema.static.findByInfo = function(firstName, familyName,
-                                             chineseCardNo, chineseNationalId) {
-    Applicant.findByInfo
-}
-
 applicantSchema.static.validatePersonalInfo = function(data) {
     // Check data is valid
     return true;
