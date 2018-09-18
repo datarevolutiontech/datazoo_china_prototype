@@ -10,13 +10,21 @@ router.get('/', (req, res, next) => {
         .select('-__v')
         .exec()
         .then(applicants => {
+            let applicant_list = []
+            for (let applicant of applicants) {
+                applicant['entryIsComplete'] = applicant.isComplete;
+
+                if (applicant.entryIsComplete != null){
+                    applicant_list.push(applicant);
+                }
+            }
             res.status(200).json({
                 message: "You can't send a /GET request to /applicants/. An ID must be provided. Here's some data that was found though.",
                 example_query: {
                     type: "GET",
                     URL: "/applicants/" + example_id
                 },
-                applicants: applicants
+                applicants: applicant_list
             })
         })
         .catch(err => {
@@ -76,12 +84,12 @@ router.post('/', (req, res, next) => {
                     if (step == 7) { editing_params = { "nzContacts": new_data }; }
 
                     Applicant
-                        .findByIdAndUpdate(id=parameters.id, editing_params)
+                        .findByIdAndUpdate(id = parameters.id, editing_params, { new: true })
                         .then(result => {
                             if (result != null) {
                                 res.status(200).json({
                                     message: "Added entries:",
-                                    applicant: applicant
+                                    applicant: result
                                 });
                             }
                         })
@@ -169,7 +177,8 @@ router.get('/:applicantId', (req, res, next) => {
                     res.status(200).json({
                         message: "Valid id",
                         id: id,
-                        person: applicant
+                        person: applicant,
+                        isComplete: applicant.isComplete
                     })
                 }
             }

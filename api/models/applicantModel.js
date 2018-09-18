@@ -2,19 +2,21 @@
 const mongoose = require('mongoose');
 
 const personalInfoSchema = mongoose.Schema({
-    fullName             : { type: String , required: true  },
-    dateOfBirth          : { type: Date   , required: true  },
-    gender               : { type: String , required: true  },
-    otherNames           : { type: String , required: false },
-    citizenship          : { type: String , required: true  },
-    placeOfBirth         : { type: String , required: true  },
-    countryOfBirth       : { type: String , required: true  },
-    chineseCommercialCode: { type: String , required: false },
-    chineseCardNumber    : { type: String , required: true  },
-    chineseNationalId    : { type: String , required: true  },
-    passportNo           : { type: String , required: true  },
-    dateOfIssue          : { type: Date   , required: true  },
-    dateOfExpiry         : { type: Date   , required: true  }
+    firstName             : { type: String    ,      required: true },
+    familyName            : { type: String    ,      required: true },
+    fullName              : { type: String    ,      default:  [this.firstName, this.familyName].join(" ")},
+    dateOfBirth           : { type: Date      ,      required: true },
+    gender                : { type: String    ,      required: true },
+    otherNames            : { type: String    ,      required: false },
+    citizenship           : { type: String    ,      required: true },
+    placeOfBirth          : { type: String    ,      required: true },
+    countryOfBirth        : { type: String    ,      required: true },
+    chineseCommercialCode : { type: String    ,      required: false },
+    chineseCardNo         : { type: String    ,      required: true },
+    chineseNationalId     : { type: String    ,      required: true },
+    passportNo            : { type: String    ,      required: true },
+    dateOfIssue           : { type: Date      ,      required: true },
+    dateOfExpiry          : { type: Date      ,      required: true }
 });
 
 const residentialInfoSchema = mongoose.Schema({
@@ -133,6 +135,31 @@ const applicantSchema = mongoose.Schema({
     // ------
 
     nzContacts: [NZContactSchema]
+});
+
+applicantSchema.pre('findOneAndUpdate', function(next) {
+    this._update.personalInfo.firstName = "surprise"
+    if (this._update.personalInfo != null) {
+        // let fullName = this.personalInfo.firstName + this.personalInfo.familyName;
+        fullName = this._update.personalInfo.firstName + " " +  this._update.personalInfo.familyName;
+        this._update.personalInfo.fullName = fullName;
+    }
+    // Github hackery to fix next not being a function
+    if (!(next instanceof Function)) {
+        data = next
+        next = function() {}
+    }
+    next();
+});
+
+applicantSchema.virtual('isComplete').get(function () {
+    return (
+        this.personalInfo != null &&
+        this.residentialInfo != null &&
+        this.workAndEducation != null &&
+        this.relationships != null &&
+        this.visaType != null
+    );
 });
 
 applicantSchema.static.validatePersonalInfo = function(data) {
