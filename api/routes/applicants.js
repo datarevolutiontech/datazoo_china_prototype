@@ -158,6 +158,50 @@ router.delete('/:applicantId', (req, res, next) => {
     }
 });
 
+router.post('/retrieveID/', (req, res, next) => {
+    let params = req.body;
+
+    let firstName = params.firstName;
+    let familyName = params.familyName;
+    let chineseCardNo = params.chineseCardNo;
+    let chineseNationalId = params.chineseNationalId;
+
+    // Exit early if all the required information isn't provided
+    if (firstName         == null ||
+        familyName        == null ||
+        chineseCardNo     == null ||
+        chineseNationalId == null) {
+        error_response("Not all the required information was provided.");
+    }
+
+    let applicant = Applicant.
+        findOne({
+            "personalInfo.firstName": firstName,
+            "personalInfo.familyName": familyName,
+            "personalInfo.chineseCardNo": chineseCardNo,
+            "personalInfo.chineseNationalId": chineseNationalId
+        })
+        .then(result => {
+            res.status(200).json({
+                message: "User found!",
+                id: result._id,
+                result: result,
+                your_query: params,
+            })
+        })
+        .catch(error => {
+            error_response("Error while looking for relevant applicant", error);
+        })
+
+    function error_response(message, error) {
+        res.status(400).json({
+            message: message,
+            your_query: params,
+            error: error
+        });
+    }
+});
+
 router.patch('/:applicantId', (req, res, next) => {
     const id = req.params.applicantId;
     // TODO: delete the id's associated entry

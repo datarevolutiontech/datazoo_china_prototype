@@ -4,14 +4,14 @@ const mongoose = require('mongoose');
 const personalInfoSchema = mongoose.Schema({
     firstName             : { type: String    ,      required: true },
     familyName            : { type: String    ,      required: true },
-    fullName              : { type: String    ,      default:  [this.firstName, this.familyName].join(" ")},
+    fullName              : { type: String    ,      default:  ""   },
     dateOfBirth           : { type: Date      ,      required: true },
     gender                : { type: String    ,      required: true },
-    otherNames            : { type: String    ,      required: false },
+    otherNames            : { type: String    ,      required: false},
     citizenship           : { type: String    ,      required: true },
     placeOfBirth          : { type: String    ,      required: true },
     countryOfBirth        : { type: String    ,      required: true },
-    chineseCommercialCode : { type: String    ,      required: false },
+    chineseCommercialCode : { type: String    ,      required: false},
     chineseCardNo         : { type: String    ,      required: true },
     chineseNationalId     : { type: String    ,      required: true },
     passportNo            : { type: String    ,      required: true },
@@ -149,6 +149,7 @@ applicantSchema.pre('findOneAndUpdate', function(next) {
 
     // Update entry is complete status
     complete = false;
+    // TODO: More comprehensive error checking
     if (this.personalInfo != null && this.residentialInfo != null
             && this.workAndEducation != null && this.relationships != null
             && this.visaType != null) {
@@ -164,6 +165,27 @@ applicantSchema.pre('findOneAndUpdate', function(next) {
     }
     next();
 });
+
+personalInfoSchema.static.findByInfo = function(firstName, familyName,
+                                                chineseCardNo, chineseNationalId) {
+    personalInfo.findByInfo({
+        firstName: firstName,
+        familyName: familyName,
+        chineseCardNo: chineseCardNo,
+        chineseNationalId: chineseNationalId
+    });
+
+    if (personalInfo != null) {
+        return personalInfo._id;
+    } else {
+        return null;
+    }
+}
+
+applicantSchema.static.findByInfo = function(firstName, familyName,
+                                             chineseCardNo, chineseNationalId) {
+    Applicant.findByInfo
+}
 
 applicantSchema.static.validatePersonalInfo = function(data) {
     // Check data is valid
