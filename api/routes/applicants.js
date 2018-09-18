@@ -10,7 +10,7 @@ router.get('/', (req, res, next) => {
         .select('-__v')
         .exec()
         .then(applicants => {
-            res.status(400).json({
+            res.status(200).json({
                 message: "You can't send a /GET request to /applicants/. An ID must be provided. Here's some data that was found though.",
                 example_query: {
                     type: "GET",
@@ -35,47 +35,62 @@ router.get('/', (req, res, next) => {
 router.post('/', (req, res, next) => {
     let parameters = req.body;
 
-        console.log(parameters);
+    if (parameters.step == null) {
+        send_error("Step number not specified");
+    } else if (parameters.step != "0" && parameters.id == null) {
+        send_error("Id number not specified");
+    } else {
+        Applicant
+            .findById(parameters.id)
+            .then(applicant => {
+                if (applicant == null || parameters.step == 0) {
+                    // Applicant not found, have to create one
+                    let applicantID = mongoose.Types.ObjectId();
+                    applicant = Applicant.create({ _id: applicantID });
 
+                    res.status(200).json({
+                        message: "Created new entry!",
+                        id: applicantID
+                    });
+                } else {
+                    let step = parameters.step;
+                    let new_data = [];
 
-        if (parameters.step == null) {
-            send_error("Step number not specified");
-        } else if (parameters.id == null) {
-            send_error("Id number not specified");
-        } else {
-            Applicant
-                .findById(parameters.id)
-                .then(applicant => {
-                    if (applicant == null || parameters.step == 0) {
-                        // Applicant not found, have to create one
-                        applicant = Applicant.create({ _id: mongoose.Types.ObjectId(parameters.id) })
-
-                        res.status(200).json({
-                            message: "Created new entry!",
-                            applicant: applicant
-                        })
-                    } else {
-                        let military_service = [];
+                    // Check if step being edited is an array in the schema
+                    if (step == 4 || step == 5 || step == 7) {
                         for (let service of parameters.data) {
-                            military_service.push(service);
+                            new_data.push(service);
                         }
-
-                        Applicant
-                            .findByIdAndUpdate(id=parameters.id, { "militaryService": military_service })
-                            .then(result => {
-                                if (result != null) {
-                                    res.status(200).json({
-                                        message: "Added entries:",
-                                        applicant: applicant
-                                    });
-                                }
-                            })
+                    } else {
+                        new_data = parameters.data;
                     }
-                })
-                .catch(err => {
-                    console.log(err);
-                    send_error(err);
-                })
+
+                    // Stupid hardcoded hackery. Ask Dylan why it was necessary
+                    let editing_params = "";
+                    if (step == 1) { editing_params = { "personalInfo": new_data }; }
+                    if (step == 2) { editing_params = { "residentialInfo": new_data }; }
+                    if (step == 3) { editing_params = { "workAndEducation": new_data }; }
+                    if (step == 4) { editing_params = { "militaryService": new_data }; }
+                    if (step == 5) { editing_params = { "relationships": new_data }; }
+                    if (step == 6) { editing_params = { "visaType": new_data }; }
+                    if (step == 7) { editing_params = { "nzContacts": new_data }; }
+
+                    Applicant
+                        .findByIdAndUpdate(id=parameters.id, editing_params)
+                        .then(result => {
+                            if (result != null) {
+                                res.status(200).json({
+                                    message: "Added entries:",
+                                    applicant: applicant
+                                });
+                            }
+                        })
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                send_error(err);
+            })
 
             // Applicant not found, have to create a new one
             // if (applicant == null || parameters.step == 0) {

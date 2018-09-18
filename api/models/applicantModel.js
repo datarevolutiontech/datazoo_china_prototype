@@ -90,7 +90,7 @@ const NZContactSchema = mongoose.Schema({
 });
 
 const applicantSchema = mongoose.Schema({
-    _id: { type: mongoose.Schema.ObjectId, required: true }, // will this be an int instead?
+    _id: mongoose.Schema.ObjectId,
 
     // ------
     // Step 1 (Personal Info)
