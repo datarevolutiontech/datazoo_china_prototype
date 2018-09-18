@@ -10,21 +10,13 @@ router.get('/', (req, res, next) => {
         .select('-__v')
         .exec()
         .then(applicants => {
-            let applicant_list = []
-            for (let applicant of applicants) {
-                applicant['entryIsComplete'] = applicant.isComplete;
-
-                if (applicant.entryIsComplete != null){
-                    applicant_list.push(applicant);
-                }
-            }
             res.status(200).json({
                 message: "You can't send a /GET request to /applicants/. An ID must be provided. Here's some data that was found though.",
                 example_query: {
                     type: "GET",
                     URL: "/applicants/" + example_id
                 },
-                applicants: applicant_list
+                applicants: applicants
             })
         })
         .catch(err => {
@@ -99,57 +91,7 @@ router.post('/', (req, res, next) => {
                 console.log(err);
                 send_error(err);
             })
-
-            // Applicant not found, have to create a new one
-            // if (applicant == null || parameters.step == 0) {
-            //     // Have to convert string to ObjectID type in order to use it as an ID
-            //     applicant = new Applicant({ _id: mongoose.Types.ObjectId(parameters.id) });
-
-            //     applicant
-            //         .save()
-            //         .then(result => {
-            //             console.log(result);
-            //             res.status(200).json({
-            //                 message: "Added new applicant",
-            //                 applicant: applicant
-            //             });
-            //         })
-            // } else {
-            //     Applicant.findById(parameters.id)
-            //         .exec(function (err, applicant) {
-            //             applicant.addData(step = parameters.step,
-            //                               data = parameters.data);
-            //         })
-
-
-            // }
         }
-
-    // if (is_valid_applicant_data(req.body)) { // body does contain (enough) data
-    //     let applicant = new Applicant({});
-    //     parameters['_id'] = new mongoose.Types.ObjectId();
-    //     for (param in parameters) {
-    //         applicant[param] = parameters[param];
-    //         console.log(param, ': ', parameters[param]);
-    //     }
-
-    //     applicant
-    //         .save()
-    //         .then(result => {
-    //             console.log(result);
-    //             res.status(201).json({
-    //                 message: "Created applicant successfully",
-    //                 created_applicant: {
-    //                     applicant
-    //                 }
-    //             });
-    //         })
-    //         .catch(err => {
-    //             send_error(err);
-    //         });
-    // } else {
-    //     error_message("");
-    // }
 
     function send_error(error_message) {
         res.status(400).json({
@@ -177,8 +119,7 @@ router.get('/:applicantId', (req, res, next) => {
                     res.status(200).json({
                         message: "Valid id",
                         id: id,
-                        person: applicant,
-                        isComplete: applicant.isComplete
+                        person: applicant
                     })
                 }
             }

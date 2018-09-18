@@ -94,6 +94,8 @@ const NZContactSchema = mongoose.Schema({
 const applicantSchema = mongoose.Schema({
     _id: mongoose.Schema.ObjectId,
 
+    entryIsComplete: { type: Boolean, required: false, default: false },
+
     // ------
     // Step 1 (Personal Info)
     // ------
@@ -138,28 +140,29 @@ const applicantSchema = mongoose.Schema({
 });
 
 applicantSchema.pre('findOneAndUpdate', function(next) {
-    this._update.personalInfo.firstName = "surprise"
+    // Combine first and family name into full name
     if (this._update.personalInfo != null) {
         // let fullName = this.personalInfo.firstName + this.personalInfo.familyName;
         fullName = this._update.personalInfo.firstName + " " +  this._update.personalInfo.familyName;
         this._update.personalInfo.fullName = fullName;
     }
+
+    // Update entry is complete status
+    complete = false;
+    if (this.personalInfo != null && this.residentialInfo != null
+            && this.workAndEducation != null && this.relationships != null
+            && this.visaType != null) {
+        complete = true;
+    }
+    this._update.entryIsComplete = complete;
+
+
     // Github hackery to fix next not being a function
     if (!(next instanceof Function)) {
         data = next
         next = function() {}
     }
     next();
-});
-
-applicantSchema.virtual('isComplete').get(function () {
-    return (
-        this.personalInfo != null &&
-        this.residentialInfo != null &&
-        this.workAndEducation != null &&
-        this.relationships != null &&
-        this.visaType != null
-    );
 });
 
 applicantSchema.static.validatePersonalInfo = function(data) {
