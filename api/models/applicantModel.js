@@ -5,7 +5,7 @@ const personalInfoSchema = mongoose.Schema({
     firstName             : { type: String    ,      required: true },
     familyName            : { type: String    ,      required: true },
     fullName              : { type: String    ,      default:  ""   },
-    dateOfBirth           : { type: Date      ,      required: true },
+    dateOfBirth           : { type: String    ,      required: true },
     gender                : { type: String    ,      required: true },
     otherNames            : { type: String    ,      required: false},
     citizenship           : { type: String    ,      required: true },
@@ -15,8 +15,8 @@ const personalInfoSchema = mongoose.Schema({
     chineseCardNo         : { type: String    ,      required: true },
     chineseNationalId     : { type: String    ,      required: true },
     passportNo            : { type: String    ,      required: true },
-    dateOfIssue           : { type: Date      ,      required: true },
-    dateOfExpiry          : { type: Date      ,      required: true }
+    dateOfIssue           : { type: String    ,      required: true },
+    dateOfExpiry          : { type: String    ,      required: true }
 });
 
 const residentialInfoSchema = mongoose.Schema({
@@ -46,29 +46,29 @@ const workAndEducationSchema = mongoose.Schema({
     companyEmail        : { type: String, required: false },
     institutionName     : { type: String, required: false },
     studyProgramme      : { type: String, required: false },
-    attendanceDateStart : { type: Date,   required: false },
-    attendanceDateEnd   : { type: Date,   required: false },
+    attendanceDateStart : { type: String, required: false },
+    attendanceDateEnd   : { type: String, required: false },
 });
 
 const militaryServiceSchema = mongoose.Schema({
     militaryRank     : { type: String, required: false },
     militaryUnit     : { type: String, required: false },
     militaryService  : { type: String, required: false },
-    militaryDateStart: { type: Date  , required: false },
-    militaryDateEnd  : { type: Date  , required: false }
+    militaryDateStart: { type: String, required: false },
+    militaryDateEnd  : { type: String, required: false }
 });
 
 const relationshipSchema = mongoose.Schema({
     familyMemberName        : { type: String, required: true },
     familyMemberRelationship: { type: String, required: true },
-    familyMemberDateOfBirth : { type: Date  , required: true }
+    familyMemberDateOfBirth : { type: String, required: true }
 });
 
 const visaTypeSchema = mongoose.Schema({
     visaType             : { type: String, required: false },
     visaOtherInput       : { type: String, required: false },
-    visaDateStart        : { type: Date,   required: true  },
-    visaDateEnd          : { type: Date,   required: true  },
+    visaDateStart        : { type: String, required: true  },
+    visaDateEnd          : { type: String, required: true  },
     visaBusinessName     : { type: String, required: false },
     visaBusinessAddress  : { type: String, required: false },
     visaBusinessTelephone: { type: Number, required: false },
