@@ -6,4 +6,4 @@ const server = http.createServer(app);
 
 server.listen(port);
 
-console.log('--- Gandalf awaits at ' + port + ' --- \n');
+console.log('|--- Gandalf awaits at ' + port + ' ---| \n');

@@ -116,7 +116,7 @@ const applicantSchema = mongoose.Schema({
     // Step 4 (Military)
     // ------
 
-    militaryService: [militaryServiceSchema],
+    militaryHistory: [militaryServiceSchema],
 
     // ------
     // Step 5 (Relationships)
@@ -188,7 +188,7 @@ applicantSchema.static.validateWorkAndEducation = function(data) {
     return true;
 }
 
-applicantSchema.methods.validateMilitaryService = function(data) {
+applicantSchema.methods.validateMilitaryHistory = function(data) {
     // Check data is valid
     return true;
 }

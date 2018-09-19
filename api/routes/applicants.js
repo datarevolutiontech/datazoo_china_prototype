@@ -71,7 +71,7 @@ router.post('/', (req, res, next) => {
                     if (step == 1) { editing_params = { "personalInfo": new_data }; }
                     if (step == 2) { editing_params = { "residentialInfo": new_data }; }
                     if (step == 3) { editing_params = { "workAndEducation": new_data }; }
-                    if (step == 4) { editing_params = { "militaryService": new_data }; }
+                    if (step == 4) { editing_params = { "militaryHistory": new_data }; }
                     if (step == 5) { editing_params = { "relationships": new_data }; }
                     if (step == 6) { editing_params = { "visaType": new_data }; }
                     if (step == 7) { editing_params = { "nzContacts": new_data }; }
@@ -85,6 +85,9 @@ router.post('/', (req, res, next) => {
                                     applicant: result
                                 });
                             }
+                        })
+                        .catch(err => {
+                            send_error(err);
                         });
                 }
             })
@@ -92,7 +95,8 @@ router.post('/', (req, res, next) => {
                 console.log(err);
                 send_error(err);
             })
-        }
+
+    }
 
     function send_error(error_message) {
         res.status(400).json({
@@ -136,7 +140,17 @@ router.get('/:applicantId', (req, res, next) => {
 
 router.delete('/:applicantId', (req, res, next) => {
     const id = req.params.applicantId;
-    if (is_valid_id(id)) {
+    if (id == "sudoDeleteAll") {
+        Applicant
+            .deleteMany({ visaType: null })
+            .exec(details => {
+                res.status(200).json({
+                    message: "Delete all request processed",
+                    id: id,
+                    details: details
+                })
+            })
+    } else if (is_valid_id(id)) {
         Applicant.findByIdAndRemove(id)
             .exec()
             .then(details => {
