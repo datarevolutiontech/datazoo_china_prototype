@@ -51,7 +51,8 @@ router.post('/', (req, res, next) => {
 
                     res.status(200).json({
                         message: "Created new entry!",
-                        id: applicantID
+                        id: applicantID,
+                        applicant: applicant
                     });
                 } else {
                     let step = parameters.step;

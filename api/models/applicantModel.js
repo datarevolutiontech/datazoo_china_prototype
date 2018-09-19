@@ -145,7 +145,7 @@ const applicantSchema = mongoose.Schema({
     }
 });
 
-applicantSchema.pre('save', function(next) {
+applicantSchema.pre('findOneAndUpdate', function(next) {
     // Combine first and family name into full name
     if (this._update.personalInfo != null) {
         // let fullName = this.personalInfo.firstName + this.personalInfo.familyName;
