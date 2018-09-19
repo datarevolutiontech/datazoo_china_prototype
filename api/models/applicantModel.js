@@ -94,8 +94,6 @@ const NZContactSchema = mongoose.Schema({
 const applicantSchema = mongoose.Schema({
     _id: mongoose.Schema.ObjectId,
 
-    entryIsComplete: { type: Boolean, required: false, default: false },
-
     // ------
     // Step 1 (Personal Info)
     // ------
@@ -137,9 +135,17 @@ const applicantSchema = mongoose.Schema({
     // ------
 
     nzContacts: [NZContactSchema]
+},
+{
+    toObect: {
+        virtuals: true
+    },
+    toJSON: {
+        virtuals: true
+    }
 });
 
-applicantSchema.pre('findOneAndUpdate', function(next) {
+applicantSchema.pre('save', function(next) {
     // Combine first and family name into full name
     if (this._update.personalInfo != null) {
         // let fullName = this.personalInfo.firstName + this.personalInfo.familyName;
@@ -147,6 +153,15 @@ applicantSchema.pre('findOneAndUpdate', function(next) {
         this._update.personalInfo.fullName = fullName;
     }
 
+    // Github hackery to fix next not being a function
+    if (!(next instanceof Function)) {
+        data = next
+        next = function() {}
+    }
+    next();
+})
+
+applicantSchema.virtual('isComplete').get(function () {
     // Update entry is complete status
     complete = false;
     // TODO: More comprehensive error checking
@@ -155,16 +170,8 @@ applicantSchema.pre('findOneAndUpdate', function(next) {
             && this.visaType != null) {
         complete = true;
     }
-    this._update.entryIsComplete = complete;
-
-
-    // Github hackery to fix next not being a function
-    if (!(next instanceof Function)) {
-        data = next
-        next = function() {}
-    }
-    next();
-});
+    return complete;
+})
 
 applicantSchema.static.validatePersonalInfo = function(data) {
     // Check data is valid

@@ -85,7 +85,7 @@ router.post('/', (req, res, next) => {
                                     applicant: result
                                 });
                             }
-                        })
+                        });
                 }
             })
             .catch(err => {
