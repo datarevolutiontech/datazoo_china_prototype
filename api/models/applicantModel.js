@@ -50,7 +50,7 @@ const workAndEducationSchema = mongoose.Schema({
     attendanceDateEnd   : { type: String, required: false },
 });
 
-const militaryServiceSchema = mongoose.Schema({
+const militaryHistorySchema = mongoose.Schema({
     militaryRank     : { type: String, required: false },
     militaryUnit     : { type: String, required: false },
     militaryService  : { type: String, required: false },
@@ -116,7 +116,7 @@ const applicantSchema = mongoose.Schema({
     // Step 4 (Military)
     // ------
 
-    militaryHistory: [militaryServiceSchema],
+    militaryHistory: [militaryHistorySchema],
 
     // ------
     // Step 5 (Relationships)
