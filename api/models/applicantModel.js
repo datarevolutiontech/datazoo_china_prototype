@@ -80,8 +80,8 @@ const visaTypeSchema = mongoose.Schema({
     visaStudyArea        : { type: String, required: false },
     visaStudyProgramme   : { type: String, required: false },
     visaStudyInstitution : { type: String, required: false },
-    visaStudyStartDate   : { type: Date,   required: false },
-    visaStudyEndDate     : { type: Date,   required: false },
+    visaStudyStartDate   : { type: String, required: false },
+    visaStudyEndDate     : { type: String, required: false },
 });
 
 const NZContactSchema = mongoose.Schema({
