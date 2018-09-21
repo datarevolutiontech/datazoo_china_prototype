@@ -40,7 +40,7 @@ const workAndEducationSchema = mongoose.Schema({
     companyStreetNo     : { type: Number, required: false },
     companyStreetName   : { type: String, required: false },
     companyDistrict     : { type: String, required: false },
-    companyProvince     : { type: String, required: false },
+    companyCity     : { type: String, required: false },
     companyProvince     : { type: String, required: false },
     companyTelephone    : { type: Number, required: false },
     companyEmail        : { type: String, required: false },
