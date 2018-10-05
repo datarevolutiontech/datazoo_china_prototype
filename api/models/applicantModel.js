@@ -174,102 +174,102 @@ applicantSchema.virtual('isComplete').get(function () {
     return complete;
 })
 
-applicantSchema.virtual('verificationStatus').get(function () {
-    let complete = this.get('isComplete');
-    // if applicant details are complete, verify
-    if (complete) {
+// applicantSchema.virtual('verificationStatus').get(function () {
+//     let complete = this.get('isComplete');
+//     // if applicant details are complete, verify
+//     if (complete) {
 
-        let results = {
-            chinese_national_id: false,
-            chinese_bank_card: false,
-            watchlist_aml: false,
-            chinese_police_db_bad_record: false,
-            chinese_police_db_crime_verification: false
-        }
+//         let results = {
+//             chinese_national_id: false,
+//             chinese_bank_card: false,
+//             watchlist_aml: false,
+//             chinese_police_db_bad_record: false,
+//             chinese_police_db_crime_verification: false
+//         }
 
-        results.chinese_national_id = verify_chinese_national_id(
-            fullName = this.fullName,
-            IDCardNo = this.chinese_national_id,
-            DOB = this.dateOfBirth
-        );
+//         results.chinese_national_id = verify_chinese_national_id(
+//             fullName = this.fullName,
+//             IDCardNo = this.chinese_national_id,
+//             DOB = this.dateOfBirth
+//         );
 
-        results.chinese_bank_card = verify_chinese_bank_card(
-            bankCardNo = this.chinese_bank_card,
-            fullName = this.fullName,
-            IDCardNo = this.IDCardNo,
-            phoneNumber = this.phoneNumber,
-            DOB = this.dateOfBirth
-        );
+//         results.chinese_bank_card = verify_chinese_bank_card(
+//             bankCardNo = this.chinese_bank_card,
+//             fullName = this.fullName,
+//             IDCardNo = this.IDCardNo,
+//             phoneNumber = this.phoneNumber,
+//             DOB = this.dateOfBirth
+//         );
 
-        results.watchlist_aml = verify_watchlist_aml(
-            firstName = this.firstName,
-            lastName = this.lastName,
-            middleName = this.middleName,
-            DOB = this.dateOfBirth
-            // TODO: Watchlist matchtype?
-        );
+//         results.watchlist_aml = verify_watchlist_aml(
+//             firstName = this.firstName,
+//             lastName = this.lastName,
+//             middleName = this.middleName,
+//             DOB = this.dateOfBirth
+//             // TODO: Watchlist matchtype?
+//         );
 
-        results.chinese_police_db_bad_record = verify_chinese_police_db(
-            name = this.fullName, // TODO: is this meant to be first name instead?
-            cardNo = this.IDCardNo,
-            id = "", // reference string, do we need something here?
-            type = 7
-        );
+//         results.chinese_police_db_bad_record = verify_chinese_police_db(
+//             name = this.fullName, // TODO: is this meant to be first name instead?
+//             cardNo = this.IDCardNo,
+//             id = "", // reference string, do we need something here?
+//             type = 7
+//         );
 
-        results.chinese_police_db_crime_verification = verify_chinese_police_db(
-            name = this.fullName, // TODO: is this meant to be first name instead?
-            cardNo = this.IDCardNo,
-            id = "", // reference string, do we need something here?
-            type = 7
-        );
-    }
+//         results.chinese_police_db_crime_verification = verify_chinese_police_db(
+//             name = this.fullName, // TODO: is this meant to be first name instead?
+//             cardNo = this.IDCardNo,
+//             id = "", // reference string, do we need something here?
+//             type = 7
+//         );
+//     }
 
-    return results;
-})
+//     return results;
+// })
 
-function verify_chinese_national_id(fullName, IDCardNo, DOB) {
-    if (fullName != null && IDCardNo != null && DOB != null) {
-        // verify using provided information
-    } else {
-        return false;
-    }
-}
+// function verify_chinese_national_id(fullName, IDCardNo, DOB) {
+//     if (fullName != null && IDCardNo != null && DOB != null) {
+//         // verify using provided information
+//     } else {
+//         return false;
+//     }
+// }
 
-function verify_chinese_bank_card(bankCardNo, fullName, IDCardNo, phoneNumber, DOB) {
-    if (DOB != null) {
-        // verify using DOB and IDCardNo
-    } else if (fullName != null && phoneNumber != null) {
-        // verify using DOB, idcardno and phonenumber
-    } else {
-        return false;
-    }
-}
+// function verify_chinese_bank_card(bankCardNo, fullName, IDCardNo, phoneNumber, DOB) {
+//     if (DOB != null) {
+//         // verify using DOB and IDCardNo
+//     } else if (fullName != null && phoneNumber != null) {
+//         // verify using DOB, idcardno and phonenumber
+//     } else {
+//         return false;
+//     }
+// }
 
-function verify_watchlist_aml(firstName, lastName, middleName, DOB) {
-    if (firstName != null && lastName != null) {
-        // verify using provided information
-    } else {
-        return false;
-    }
-}
+// function verify_watchlist_aml(firstName, lastName, middleName, DOB) {
+//     if (firstName != null && lastName != null) {
+//         // verify using provided information
+//     } else {
+//         return false;
+//     }
+// }
 
-function verify_chinese_police_db(name, cardNo, id, type) {
-    /* name: name in Mandarin
-     * cardno: ID Card number
-     * type: 7-bad record, 8-crime verification
-     * id: a reference string
-     */
+// function verify_chinese_police_db(name, cardNo, id, type) {
+//     /* name: name in Mandarin
+//      * cardno: ID Card number
+//      * type: 7-bad record, 8-crime verification
+//      * id: a reference string
+//      */
 
-    let client = new CardServiceDelegateClient();
-    let query_json = {
-        "name": name,
-        "cardno": cardno,
-        "type": type,
-        "id": id
-    };
+//     let client = new CardServiceDelegateClient();
+//     let query_json = {
+//         "name": name,
+//         "cardno": cardno,
+//         "type": type,
+//         "id": id
+//     };
 
-    return client.CheckBadRecord
-}
+//     return client.CheckBadRecord
+// }
 
 applicantSchema.static.validatePersonalInfo = function(data) {
     // Check data is valid
