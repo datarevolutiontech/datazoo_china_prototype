@@ -2,6 +2,10 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
+const soap = require('easysoap');
+const soap_url = "https://www.egovpass.com.cn:443/CertificationService/CardServicePort";
+
+
 const personalInfoSchema = mongoose.Schema({
     firstName             : { type: String    ,      required: true },
     familyName            : { type: String    ,      required: true },
@@ -174,58 +178,58 @@ applicantSchema.virtual('isComplete').get(function () {
     return complete;
 })
 
-// applicantSchema.virtual('verificationStatus').get(function () {
-//     let complete = this.get('isComplete');
-//     // if applicant details are complete, verify
-//     if (complete) {
+applicantSchema.virtual('verificationStatus').get(function () {
+    let complete = this.get('isComplete');
+    // if applicant details are complete, verify
+    if (complete) {
 
-//         let results = {
-//             chinese_national_id: false,
-//             chinese_bank_card: false,
-//             watchlist_aml: false,
-//             chinese_police_db_bad_record: false,
-//             chinese_police_db_crime_verification: false
-//         }
+        let results = {
+            //     chinese_national_id: false,
+            //     chinese_bank_card: false,
+            //     watchlist_aml: false,
+            //     chinese_police_db_bad_record: false,
+            //     chinese_police_db_crime_verification: false
+            // }
 
-//         results.chinese_national_id = verify_chinese_national_id(
-//             fullName = this.fullName,
-//             IDCardNo = this.chinese_national_id,
-//             DOB = this.dateOfBirth
-//         );
+            // results.chinese_national_id = verify_chinese_national_id(
+            //     fullName = this.fullName,
+            //     IDCardNo = this.chinese_national_id,
+            //     DOB = this.dateOfBirth
+            // );
 
-//         results.chinese_bank_card = verify_chinese_bank_card(
-//             bankCardNo = this.chinese_bank_card,
-//             fullName = this.fullName,
-//             IDCardNo = this.IDCardNo,
-//             phoneNumber = this.phoneNumber,
-//             DOB = this.dateOfBirth
-//         );
+            // results.chinese_bank_card = verify_chinese_bank_card(
+            //     bankCardNo = this.chinese_bank_card,
+            //     fullName = this.fullName,
+            //     IDCardNo = this.IDCardNo,
+            //     phoneNumber = this.phoneNumber,
+            //     DOB = this.dateOfBirth
+            // );
 
-//         results.watchlist_aml = verify_watchlist_aml(
-//             firstName = this.firstName,
-//             lastName = this.lastName,
-//             middleName = this.middleName,
-//             DOB = this.dateOfBirth
-//             // TODO: Watchlist matchtype?
-//         );
+            // results.watchlist_aml = verify_watchlist_aml(
+            //     firstName = this.firstName,
+            //     lastName = this.lastName,
+            //     middleName = this.middleName,
+            //     DOB = this.dateOfBirth
+            //     // TODO: Watchlist matchtype?
+            // );
 
-//         results.chinese_police_db_bad_record = verify_chinese_police_db(
-//             name = this.fullName, // TODO: is this meant to be first name instead?
-//             cardNo = this.IDCardNo,
-//             id = "", // reference string, do we need something here?
-//             type = 7
-//         );
+            "chinese_police_db_bad_record": verify_chinese_police_db(
+                name = this.fullName, // TODO: is this meant to be first name instead?
+                cardNo = this.IDCardNo,
+                id = "", // reference string, do we need something here?
+                type = 7
+            ),
 
-//         results.chinese_police_db_crime_verification = verify_chinese_police_db(
-//             name = this.fullName, // TODO: is this meant to be first name instead?
-//             cardNo = this.IDCardNo,
-//             id = "", // reference string, do we need something here?
-//             type = 7
-//         );
-//     }
-
-//     return results;
-// })
+            "chinese_police_db_crime_verification": verify_chinese_police_db(
+                name = this.fullName, // TODO: is this meant to be first name instead?
+                cardNo = this.IDCardNo,
+                id = "", // reference string, do we need something here?
+                type = 8
+            ),
+        }
+        return results;
+    }
+})
 
 // function verify_chinese_national_id(fullName, IDCardNo, DOB) {
 //     if (fullName != null && IDCardNo != null && DOB != null) {
@@ -253,23 +257,58 @@ applicantSchema.virtual('isComplete').get(function () {
 //     }
 // }
 
-// function verify_chinese_police_db(name, cardNo, id, type) {
-//     /* name: name in Mandarin
-//      * cardno: ID Card number
-//      * type: 7-bad record, 8-crime verification
-//      * id: a reference string
-//      */
+function verify_chinese_police_db(name, cardNo, id, type) {
+    /* name: name in Mandarin
+     * cardno: ID Card number
+     * type: 7-bad record, 8-crime verification
+     * id: a reference string
+     */
+    let query_json = {
+        arg0: process.env.watchlistkey,
+        arg1: {
+            "name": name,
+            "cardno": cardNo,
+            "type": type,
+            "id": id
+        }
+    };
 
-//     let client = new CardServiceDelegateClient();
-//     let query_json = {
-//         "name": name,
-//         "cardno": cardno,
-//         "type": type,
-//         "id": id
-//     };
+    const params = {
+        host: "https://www.egovpass.com.cn",
+        wsdl: "/CertificationService/CardServicePort?wsdl",
+        path: "/CertificationService/CardServicePort"
+    }
 
-//     return client.CheckBadRecord
-// }
+    let client = soap(params);
+
+    client.getMethodParamsByName('CheckBadRecord')
+        .then((methodParams) => {
+            console.log(methodParams.request);
+            console.log(methodParams.response);
+        })
+        .catch((err) => { throw new Error(err); });
+
+    client
+        .call({
+            method: "CheckBadRecord",
+            attributes: {
+                "Content-Type": "text/xml; charset=utf-8",
+                "Host": "www.egovpass.com.cn",
+                "Expect": "100-continue",
+                "Accept-Encoding": "gzip, deflate",
+                "Connection": "Keep-Alive"
+            },
+            params: { query_json }
+        })
+        .then((res) => {
+            console.log(res.data);
+            console.log(res.body);
+            console.log(res.header);
+        })
+        .catch((err) => {
+            throw new Error(err);
+        });
+}
 
 applicantSchema.static.validatePersonalInfo = function(data) {
     // Check data is valid

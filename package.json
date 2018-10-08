@@ -6,10 +6,13 @@
   "dependencies": {
     "body-parser": "~1.0.1",
     "dotenv": "^6.0.0",
+    "easy-soap-request": "^2.2.2",
+    "easysoap": "^2.0.1",
     "express": "~4.0.0",
     "mongoose": "~5.2.14",
     "morgan": "^1.9.0",
-    "nodemon": "^1.18.4"
+    "nodemon": "^1.18.4",
+    "soap": "^0.25.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
