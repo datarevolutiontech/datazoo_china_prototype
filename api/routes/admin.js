@@ -15,19 +15,27 @@ router.post('/sessionToken', (req, res, next) => {
     let oldest_permissible_timestamp = current_timestamp - milliseconds_in_day
 
     SessionKeys
-        .find({ timestamp: { $gt: oldest_permissible_timestamp } }) // get: greater than
+        .findOne({ timestamp: { $gt: oldest_permissible_timestamp } }) // get: greater than
         .then(result => {
-            // if not found, send an error response
+            // if not found, create a new Session Key
+            if (result == null) {
+                res.status(200).json({
+                    sessionKey: result,
+                    message: "Created new session key"
+                })
+            }
             // if found
-            res.status(200).json({
-                // sessionKey: key,
-                message: "Returning session key"
-            })
+            else {
+                res.status(200).json({
+                    sessionKey: result,
+                    message: "Returning session key"
+                })
+            }
         })
         .catch(err => {
             res.status(400).json({
                 error: err,
-                message: "Error fetching a session key."
+                message: "Error fetching a session key"
             })
         });
 });

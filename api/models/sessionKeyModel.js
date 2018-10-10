@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 const sessionKeySchema = mongoose.Schema({
-    _id: mongoose.Schema.ObjectId,
     username: {
         type: String,
         required: true
