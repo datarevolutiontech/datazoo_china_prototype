@@ -5,6 +5,33 @@ const SessionKeys = require('../models/sessionKeyModel');
 
 router = express.Router();
 
+router.get('/', (req, res, next) => {
+    SessionKeys.find()
+        .select('-__v')
+        .exec()
+        .then(keys => {
+            res.status(200).json({
+                message: "You are meant to send a POST request with your username and password, in order to fetch a key",
+                example_query: {
+                    type: "POST",
+                    URL: "/admin/sessionToken"
+                },
+                key_count: keys.length,
+                keys: keys
+            })
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(400).json({
+                message: "You are meant to send a POST request with your username and password, in order to fetch a key",
+                example_query: {
+                    type: "POST",
+                    URL: "/admin/sessionToken"
+                }
+            })
+        });
+});
+
 router.post('/sessionToken', (req, res, next) => {
 
     // unix timestamp for comparison purposes
