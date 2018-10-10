@@ -1,11 +1,13 @@
 const express = require('express')
-const app = express()
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
+
+const app = express()
 require('dotenv').config()
 
 const applicantRoutes = require('./api/routes/applicants')
+const adminRoutes = require('./api/routes/admin');
 
 let dbURL = "mongodb+srv://dylandrt:";
 dbURL    += process.env.MONGO_ATLAS_PW;
@@ -52,6 +54,7 @@ app.use('/', (req, res, next) => {
 
 // Routes that handle requests
 app.use('/applicants', applicantRoutes);
+app.use('/admin', adminRoutes);
 
 // Request went past routes
 app.use((req, res, next) => {

@@ -279,35 +279,39 @@ function verify_chinese_police_db(name, cardNo, id, type) {
         path: "/CertificationService/CardServicePort"
     }
 
-    let client = soap(params);
+    let http = require('http');
 
-    client.getMethodParamsByName('CheckBadRecord')
-        .then((methodParams) => {
-            console.log(methodParams.request);
-            console.log(methodParams.response);
-        })
-        .catch((err) => { throw new Error(err); });
+    xml = `
+        <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+            <s:Body>
+                <CheckBadRecord
+                    xmlns="http://service.lilosoft/"
+                    xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+                    <arg0 xmlns="">
+                        ${process.env.watchlistkey}</arg0>
+                    <arg1 xmlns="">
+                        {"name":"chingchong", "cardno": 124, "type":7, "id": "secret id"}
+                    </arg1>
+                </CheckBadRecord>
+            </s:Body>
+        </s:Envelope>
+        `;
 
-    client
-        .call({
-            method: "CheckBadRecord",
-            attributes: {
-                "Content-Type": "text/xml; charset=utf-8",
-                "Host": "www.egovpass.com.cn",
-                "Expect": "100-continue",
-                "Accept-Encoding": "gzip, deflate",
-                "Connection": "Keep-Alive"
-            },
-            params: { query_json }
-        })
-        .then((res) => {
-            console.log(res.data);
-            console.log(res.body);
-            console.log(res.header);
-        })
-        .catch((err) => {
-            throw new Error(err);
-        });
+    http_options = {
+        hostname: "https://www.egovpass.com.cn",
+        port: 443,
+        path: "/CertificationService/CardServicePort",
+        method: "POST",
+        headers: {
+            "Content-Type": "text/xml; charset=utf-8",
+            "Content-Length": xml.length
+        }
+    }
+
+    var req = http.request(http_options, (res) => {
+
+    })
+
 }
 
 applicantSchema.static.validatePersonalInfo = function(data) {
