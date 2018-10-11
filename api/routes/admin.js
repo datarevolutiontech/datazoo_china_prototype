@@ -43,7 +43,7 @@ router.post('/sessionToken', (req, res, next) => {
     let oldest_permissible_timestamp = current_timestamp - milliseconds_in_day
 
     SessionKeys
-        .findOne({ timestamp: { $gt: oldest_permissible_timestamp } }) // get: greater than
+        .findOne({ timestamp: { $gt: oldest_permissible_timestamp } }) // $gt: greater than
         .then(result => {
             // if not found, create a new Session Key
             if (result == null) {
