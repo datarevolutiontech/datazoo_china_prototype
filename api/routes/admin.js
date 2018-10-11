@@ -1,13 +1,14 @@
-const express   = require('express');
+const express  = require('express' );
 const mongoose = require('mongoose');
+const request  = require('request' );
 
 const SessionKeys = require('../models/sessionKeyModel');
 
-router = express.Router();
+const datazoo_authenticate_url = "http://dzrest.kmsconnect.com/api/Authenticate.json";
 
+router = express.Router();
 router.get('/', (req, res, next) => {
     SessionKeys.find()
-        .select('-__v')
         .exec()
         .then(keys => {
             res.status(200).json({
@@ -46,8 +47,39 @@ router.post('/sessionToken', (req, res, next) => {
         .then(result => {
             // if not found, create a new Session Key
             if (result == null) {
+                let username = req.body.username;
+                let password = req.body.password;
+
+                if (username == undefined || password == undefined) {
+                    throw "Username or password was not defined, can't fetch session key";
+                }
+
+                let token = ""
+
+                request
+                    .post(datazoo_authenticate_url,
+                        {
+                            json: {
+                                "UserName": username,
+                                "Password": password
+                            },
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                        },
+                        function (error, response, body) {
+                            if (error) {
+                                throw error;
+                            } else {
+                                token = body.sessionToken;
+                                console.log(token);
+                            }
+                        }
+                    )
+
+
                 res.status(200).json({
-                    sessionKey: result,
+                    sessionKey: token,
                     message: "Created new session key"
                 })
             }

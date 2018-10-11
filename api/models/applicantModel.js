@@ -178,12 +178,12 @@ applicantSchema.virtual('isComplete').get(function () {
     return complete;
 })
 
-applicantSchema.virtual('verificationStatus').get(function () {
-    let complete = this.get('isComplete');
-    // if applicant details are complete, verify
-    if (complete) {
+// applicantSchema.virtual('verificationStatus').get(function () {
+//     let complete = this.get('isComplete');
+//     // if applicant details are complete, verify
+//     if (complete) {
 
-        let results = {
+//         let results = {
             //     chinese_national_id: false,
             //     chinese_bank_card: false,
             //     watchlist_aml: false,
@@ -213,23 +213,23 @@ applicantSchema.virtual('verificationStatus').get(function () {
             //     // TODO: Watchlist matchtype?
             // );
 
-            "chinese_police_db_bad_record": verify_chinese_police_db(
-                name = this.fullName, // TODO: is this meant to be first name instead?
-                cardNo = this.IDCardNo,
-                id = "", // reference string, do we need something here?
-                type = 7
-            ),
+        //     "chinese_police_db_bad_record": verify_chinese_police_db(
+        //         name = this.fullName, // TODO: is this meant to be first name instead?
+        //         cardNo = this.IDCardNo,
+        //         id = "", // reference string, do we need something here?
+        //         type = 7
+        //     ),
 
-            "chinese_police_db_crime_verification": verify_chinese_police_db(
-                name = this.fullName, // TODO: is this meant to be first name instead?
-                cardNo = this.IDCardNo,
-                id = "", // reference string, do we need something here?
-                type = 8
-            ),
-        }
-        return results;
-    }
-})
+        //     "chinese_police_db_crime_verification": verify_chinese_police_db(
+        //         name = this.fullName, // TODO: is this meant to be first name instead?
+        //         cardNo = this.IDCardNo,
+        //         id = "", // reference string, do we need something here?
+        //         type = 8
+        //     ),
+        // }
+//         return results;
+//     }
+// })
 
 // function verify_chinese_national_id(fullName, IDCardNo, DOB) {
 //     if (fullName != null && IDCardNo != null && DOB != null) {
