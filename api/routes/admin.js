@@ -7,7 +7,7 @@ const SessionKeys = require('../models/sessionKeyModel');
 const datazoo_authenticate_url = "http://dzrest.kmsconnect.com/api/Authenticate.json";
 
 router = express.Router();
-router.get('/', (req, res, next) => {
+router.get('/sessionToken/all', (req, res, next) => {
     SessionKeys.find()
         .exec()
         .then(keys => {
