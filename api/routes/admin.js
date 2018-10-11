@@ -52,36 +52,42 @@ router.post('/sessionToken', (req, res, next) => {
 
                 if (username == undefined || password == undefined) {
                     throw "Username or password was not defined, can't fetch session key";
-                }
+                } else {
+                    let token = ""
 
-                let token = ""
-
-                request
-                    .post(datazoo_authenticate_url,
-                        {
-                            json: {
-                                "UserName": username,
-                                "Password": password
+                    request
+                        .post(datazoo_authenticate_url,
+                            {
+                                json: {
+                                    "UserName": username,
+                                    "Password": password
+                                },
+                                headers: {
+                                    "Content-Type": "application/json"
+                                }
                             },
-                            headers: {
-                                "Content-Type": "application/json"
-                            }
-                        },
-                        function (error, response, body) {
-                            if (error) {
-                                throw error;
-                            } else {
-                                token = body.sessionToken;
-                                console.log(token);
-                            }
-                        }
-                    )
+                            function (error, response, body) {
+                                if (error) {
+                                    throw error;
+                                } else {
+                                    token = body.sessionToken;
+                                    console.log(token);
 
+                                    SessionKeys
+                                        .create({
+                                            username: username,
+                                            sessionKey: token,
+                                            timestamp: current_timestamp
+                                        });
 
-                res.status(200).json({
-                    sessionKey: token,
-                    message: "Created new session key"
-                })
+                                    res.status(200).json({
+                                        sessionKey: token,
+                                        message: "Created new session key"
+                                    })
+                                }
+                            }
+                        )
+                }
             }
             // if found
             else {
